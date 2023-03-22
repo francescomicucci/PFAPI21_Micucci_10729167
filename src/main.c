@@ -15,14 +15,15 @@ typedef struct{
 
 void readNewGraph(int dim, int* notConnected, int (*matrix)[dim]);
 int dijkstraAlgorithm(int dim, int (*matrix)[dim]);
+void rankGraph(int sum, int numberOfRankedElement, int currentGraphNumber, int* maxheapSize, top maxheap[]);
 void printResults(int currentGraphNumber, int numberOfRankedElement, top maxheap[]);
 
 int main(){
 	char input[14], comando1[14]="AggiungiGrafo";
-	int dim, numberOfRankedElement, i;
+	int dim, numberOfRankedElement;
 	scanReturnValue=scanf("%d %d", &dim, &numberOfRankedElement);
-	top maxheap[numberOfRankedElement], temptop;
-	int matrice[dim][dim], numerografo=0, somma=0, max_size=0, max_temp, nonconnesso=0, l, r;
+	top maxheap[numberOfRankedElement];
+	int matrice[dim][dim], numerografo=0, somma=0, max_size=0, nonconnesso=0;
 	
 	scanReturnValue=scanf("%s", input);
 	ciclo:
@@ -34,49 +35,10 @@ int main(){
 			goto insert;
 		}
 		nonconnesso=0;
-
 		somma = dijkstraAlgorithm(dim, matrice);
 
-		insert:
-		if(max_size<numberOfRankedElement){
-			i=max_size;
-			max_size++;
-			maxheap[max_size-1].cammino=somma;
-			maxheap[max_size-1].numero_grafo=numerografo-1;
-			while(i>0 && maxheap[((i+1)/2)-1].cammino<maxheap[i].cammino){
-				temptop=maxheap[((i+1)/2)-1];
-				maxheap[((i+1)/2)-1]=maxheap[i];
-				maxheap[i]=temptop;
-				i=((i+1)/2)-1;
-			}
-		}
-		else{
-			if(maxheap[0].cammino>somma){
-				maxheap[0].cammino=somma;
-				maxheap[0].numero_grafo=numerografo-1;
-				i=0;
-				while((2*(i+1)-1)<numberOfRankedElement){
-					l=(2*(i+1))-1;
-					r=(2*(i+1));
-					if(maxheap[l].cammino>maxheap[i].cammino){
-						max_temp=l;
-					}
-					else max_temp=i;
-					if(r<numberOfRankedElement && maxheap[r].cammino>maxheap[max_temp].cammino){
-						max_temp=r;
-					}
-					if(max_temp!=i){
-						temptop=maxheap[i];
-						maxheap[i]=maxheap[max_temp];
-						maxheap[max_temp]=temptop;
-						i=max_temp;
-						l=(2*(i+1))-1;
-						r=(2*(i+1));
-					}
-					else i=numberOfRankedElement;
-				}
-			}
-		}
+		insert: rankGraph(somma, numberOfRankedElement, numerografo, &max_size, maxheap);
+		
 		somma=0;
 		scanReturnValue=scanf("%s", input);
 	}
@@ -229,6 +191,51 @@ int dijkstraAlgorithm(int dim, int (*matrix)[dim]){
 	}
 
 	return sum;
+}
+
+void rankGraph(int sum, int numberOfRankedElement, int currentGraphNumber, int* maxheapSize, top maxheap[]){
+	int left, right, tempMax, i;
+	top temp;
+	
+	if(*maxheapSize < numberOfRankedElement){
+		i = *maxheapSize;
+		*maxheapSize = i + 1;
+		maxheap[*maxheapSize - 1].cammino = sum;
+		maxheap[*maxheapSize - 1].numero_grafo = currentGraphNumber - 1;
+		while(i > 0 && maxheap[((i+1)/2)-1].cammino < maxheap[i].cammino){
+			temp = maxheap[((i+1)/2)-1];
+			maxheap[((i+1)/2)-1] = maxheap[i];
+			maxheap[i] = temp;
+			i = ((i+1)/2)-1;
+		}
+	}
+	else{
+		if(maxheap[0].cammino > sum){
+			maxheap[0].cammino = sum;
+			maxheap[0].numero_grafo = currentGraphNumber - 1;
+			i = 0;
+			while((2*(i+1)-1) < numberOfRankedElement){
+				left = (2*(i+1))-1;
+				right = (2*(i+1));
+				if(maxheap[left].cammino > maxheap[i].cammino){
+					tempMax = left;
+				}
+				else tempMax = i;
+				if(right < numberOfRankedElement && maxheap[right].cammino > maxheap[tempMax].cammino){
+					tempMax = right;
+				}
+				if(tempMax != i){
+					temp = maxheap[i];
+					maxheap[i] = maxheap[tempMax];
+					maxheap[tempMax] = temp;
+					i = tempMax;
+					left = (2*(i+1))-1;
+					right = (2*(i+1));
+				}
+				else i = numberOfRankedElement;
+			}
+		}
+	}
 }
 
 void printResults(int currentGraphNumber, int numberOfRankedElement, top maxheap[]){
