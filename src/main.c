@@ -1,6 +1,4 @@
 #include<stdio.h>
-//#include<math.h>
-#include<time.h>
 
 unsigned int MAX=4294967295;
 
@@ -14,8 +12,6 @@ typedef struct{
 	unsigned int key;
 }nodo;
 
-clock_t start, end;
-
 int main(){
 	char input[14], comando1[14]="AggiungiGrafo", numero[5000];
 	int d, k, q, n, i, j, valorebuttato, valore;
@@ -26,30 +22,9 @@ int main(){
 	nodo miniheap[d], u, temp;
 	
 	valorebuttato=scanf("%s", input);
-	//start=clock();
 	ciclo:
 	while(input[0]==comando1[0]){
-		//start=clock();
 		punt=fgets(numero, 5000, stdin);
-		//printf("%s\n", numero);
-		/*for(i=0;i<d;i++){
-			j=0;
-			q=0;
-			while(j<d){
-				valore=0;
-				car[0]=fgetc(stdin);
-				while(car[q]<='9' && car[q]>='0'){
-					q++;
-					car[q]=fgetc(stdin);
-				}
-				for(n=0;n<q;n++){
-					valore+=pow(10, q-n-1)*(car[n]-'0');
-				}
-				q=0;
-				//matrice[i][j]=valore;
-				j++;
-			}
-		}*/
 		for(i=0;i<d;i++){
 			if(i==0){
 				punt=fgets(numero, 5000, stdin);
@@ -65,11 +40,9 @@ int main(){
 					j++;
 				}
 				while(n<j){
-					//valore=valore+pow_(j-n-1)*(numero[n]-'0');
 					valore=valore*10+(numero[n]-'0');
 					n++;
 				}
-				//car[i]=valore;
 				matrice[0][1]=valore;
 				n++;
 				j++;
@@ -79,14 +52,12 @@ int main(){
 						j++;
 					}
 					while(n<j){
-						//valore=valore+pow_(j-n-1)*(numero[n]-'0');
 						valore=valore*10+(numero[n]-'0');
 						n++;
 					}
 					if(valore!=matrice[0][1]){
 						nonconnesso=-1;
 					}
-					//car[i]=valore;
 					matrice[i][q]=valore;
 					n++;
 					if(numero[j]==','){
@@ -110,12 +81,10 @@ int main(){
 							j++;
 						}
 						while(n<j){
-							//valore=valore+pow_(j-n-1)*(numero[n]-'0');
 							valore=valore*10+(numero[n]-'0');
 							n++;
 						}
 						matrice[i][q]=valore;
-						//car[q]=valore;
 						n++;
 						if(numero[j]==','){
 							j++;
@@ -126,8 +95,6 @@ int main(){
 			}
 		}
 		numerografo++;
-		//end=clock();
-		//printf("tempo: %f\n", ((double)(end-start))/CLOCKS_PER_SEC);
 		if(nonconnesso==0){
 			somma=matrice[0][1]*(d-1);
 			goto insert;
@@ -141,7 +108,6 @@ int main(){
 			miniheap[i].key=MAX;
 			miniheap[i].num=i;
 		}
-//		start2=clock();
 		while(size>0 && miniheap[0].key!=MAX){
 			u=miniheap[0];
 			miniheap[0]=miniheap[size-1];
@@ -186,11 +152,7 @@ int main(){
 			}
 		}
 	}
-//	end2=clock();
-//	printf("%d) algoritmo: %f\n", numerografo, ((double)(end2-start2)/CLOCKS_PER_SEC));
-//	insert:
-//		start3=clock();	
-//		printf("somma: %d\n", somma);
+
 		insert:
 		if(max_size<k){
 			i=max_size;
@@ -235,13 +197,6 @@ int main(){
 		valorebuttato=scanf("%s", input);
 		valorebuttato=*punt;
 
-		/*for(i=0;i<d;i++){
-			for(j=0;j<d-1;j++){
-				printf("%d,",matrice[i][j]);
-			}
-			printf("%d\n", matrice[i][j]);
-		}
-		printf("\n");*/
 	}
 
 	if(numerografo>k){
@@ -258,8 +213,6 @@ int main(){
 			printf("%d", i);
 		}
 	}
-//	end4=clock();
-//	printf("\nscrittura: %f\n\n",  ((double)(end4 - start4)) / CLOCKS_PER_SEC);
 	valorebuttato=scanf("%s", input);
 	if(input[0]==comando1[0]){
 		printf("\n");
@@ -267,8 +220,6 @@ int main(){
 	}
 	
 	printf("\n");
-	//end=clock();
-	//printf("tempo: %f\n", ((double)(end-start))/CLOCKS_PER_SEC);
 	if(valorebuttato==-2){
 		printf("Errore\n");
 	}
