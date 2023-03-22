@@ -14,15 +14,15 @@ typedef struct{
 }nodo;
 
 void readNewGraph(int dim, int* notConnected, int (*matrix)[dim]);
+int dijkstraAlgorithm(int dim, int (*matrix)[dim]);
 void printResults(int currentGraphNumber, int numberOfRankedElement, top maxheap[]);
 
 int main(){
 	char input[14], comando1[14]="AggiungiGrafo";
-	int dim, numberOfRankedElement, i, j;
+	int dim, numberOfRankedElement, i;
 	scanReturnValue=scanf("%d %d", &dim, &numberOfRankedElement);
 	top maxheap[numberOfRankedElement], temptop;
-	int matrice[dim][dim], numerografo=0, size=0, r, l , min, padre, somma=0, max_size=0, max_temp, nonconnesso=0;
-	nodo miniheap[dim], u, temp;
+	int matrice[dim][dim], numerografo=0, somma=0, max_size=0, max_temp, nonconnesso=0, l, r;
 	
 	scanReturnValue=scanf("%s", input);
 	ciclo:
@@ -34,58 +34,8 @@ int main(){
 			goto insert;
 		}
 		nonconnesso=0;
-		
-		size=dim;
-		miniheap[0].key=0;
-		miniheap[0].num=0;
-		for(i=1;i<dim;i++){
-			miniheap[i].key=MAX;
-			miniheap[i].num=i;
-		}
-		while(size>0 && miniheap[0].key!=MAX){
-			u=miniheap[0];
-			miniheap[0]=miniheap[size-1];
-			miniheap[size-1]=u;
-			i=0;
-			size=size-1;
-			somma=somma+miniheap[size].key;
 
-		while((2*(i+1)-1)<size){
-			l=(2*(i+1))-1;
-			r=(2*(i+1));
-			if(l<size && miniheap[l].key<miniheap[i].key){
-				min=l;
-			}
-			else min=i;
-			if(r<size && miniheap[r].key<miniheap[min].key){
-				min=r;
-			}
-			if(min!=i){
-				temp=miniheap[i];
-				miniheap[i]=miniheap[min];
-				miniheap[min]=temp;
-				i=min;
-				l=(2*(i+1))-1;
-				r=(2*(i+1));
-			}
-			else i=size;
-		}
-	
-		for(i=0;i<size;i++){
-			j=miniheap[i].num;
-			if(matrice[u.num][j]!=0 && miniheap[i].key>(u.key+matrice[u.num][j])){
-				miniheap[i].key=(u.key+matrice[u.num][j]);
-				j=i;
-				while(j>0 && miniheap[((j+1)/2)-1].key>miniheap[j].key){
-					padre=((j+1)/2)-1;
-					temp=miniheap[padre];
-					miniheap[padre]=miniheap[j];
-					miniheap[j]=temp;
-					j=padre;
-				}
-			}
-		}
-	}
+		somma = dijkstraAlgorithm(dim, matrice);
 
 		insert:
 		if(max_size<numberOfRankedElement){
@@ -222,6 +172,63 @@ void readNewGraph(int dim, int* notConnected, int (*matrix)[dim]){
 		}
 	}
 	scanReturnValue =* returnCondition;
+}
+
+int dijkstraAlgorithm(int dim, int (*matrix)[dim]){
+	int sum = 0, size = dim, min, left, right, father;
+	int i, j;
+	nodo miniheap[dim], temp, root;
+
+	miniheap[0].key = 0;
+	miniheap[0].num = 0;
+	for(int counter = 1; counter < dim; counter++){
+		miniheap[counter].key = MAX;
+		miniheap[counter].num = counter;
+	}
+
+	while(size > 0 && miniheap[0].key != MAX){
+		root = miniheap[0];
+		miniheap[0]	= miniheap[size-1];
+		miniheap[size-1] = root;
+		i = 0;
+		size = size-1;
+		sum = sum + miniheap[size].key;
+
+		while((2*(i+1)-1) < size){
+			left  = (2*(i+1))-1;
+			right = (2*(i+1));
+			min   = i;
+
+			if(left < size && miniheap[left].key < miniheap[i].key){ min = left; }
+			if(right < size && miniheap[right].key < miniheap[min].key){ min = right; }
+			if(min != i){
+				temp 			= miniheap[i];
+				miniheap[i] 	= miniheap[min];
+				miniheap[min]   = temp;
+				i				= min;
+				left  			= (2*(i+1))-1;
+				right 			= (2*(i+1));
+			}
+			else i = size;
+		}
+
+		for(i = 0; i < size; i++){
+			j = miniheap[i].num;
+			if(matrix[root.num][j] != 0 && miniheap[i].key > root.key+matrix[root.num][j]){
+				miniheap[i].key = root.key + matrix[root.num][j];
+				j = i;
+				while(j > 0 && miniheap[((j+1)/2)-1].key > miniheap[j].key){
+					father = ((j+1)/2)-1;
+					temp = miniheap[father];
+					miniheap[father] = miniheap[j];
+					miniheap[j] = temp;
+					j = father;
+				}
+			}
+		}
+	}
+
+	return sum;
 }
 
 void printResults(int currentGraphNumber, int numberOfRankedElement, top maxheap[]){
