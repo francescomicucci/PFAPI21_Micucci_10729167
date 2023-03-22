@@ -1,46 +1,41 @@
 #include<stdio.h>
 
 typedef struct{
-	unsigned int path;
-	unsigned int graphNumber;
-}top;
-
-typedef struct{
 	unsigned int num;
 	unsigned int key;
-}node;
+}dictionary;
 
 unsigned int MAX = 4294967295;
 int scanReturnValue, dim, numberOfRankedElement, currentGraphNumber = 0;
 
-void readNewGraph(int dim, int* notConnected, int (*matrix)[dim]);
-int dijkstraAlgorithm(int dim, int (*matrix)[dim]);
-void rankGraph(int sum, int numberOfRankedElement, int currentGraphNumber, int* maxheapSize, top maxheap[]);
-void printResults(int currentGraphNumber, int numberOfRankedElement, top maxheap[]);
+void readNewGraph(int* notConnected, int (*matrix)[dim]);
+int dijkstraAlgorithm(int (*matrix)[dim]);
+void rankGraph(int sum, int* maxheapSize, dictionary maxheap[]);
+void printResults(dictionary maxheap[]);
 
 int main(){
 	char input[14], command1[14] = "AggiungiGrafo";
 	scanReturnValue = scanf("%d %d", &dim, &numberOfRankedElement);
 	int matrix[dim][dim], currentMaxheapSize = 0, notConnected = 0, newRanking = 0;
-	top maxheap[numberOfRankedElement];
+	dictionary maxheap[numberOfRankedElement];
 	scanReturnValue = scanf("%s", input);
 
 	while(newRanking == 0){
 		newRanking = 1;
 		while(input[0] == command1[0]){
-			readNewGraph(dim, &notConnected, matrix);
+			readNewGraph(&notConnected, matrix);
 			currentGraphNumber++;
 			if(notConnected == 0){
-				rankGraph(matrix[0][1]*(dim-1), numberOfRankedElement, currentGraphNumber, &currentMaxheapSize, maxheap);
+				rankGraph(matrix[0][1]*(dim-1), &currentMaxheapSize, maxheap);
 				scanReturnValue = scanf("%s", input);
 				continue;
 			}
 			notConnected = 0;
-			rankGraph(dijkstraAlgorithm(dim, matrix), numberOfRankedElement, currentGraphNumber, &currentMaxheapSize, maxheap);
+			rankGraph(dijkstraAlgorithm(matrix), &currentMaxheapSize, maxheap);
 			scanReturnValue = scanf("%s", input);
 		}
 
-		printResults(currentGraphNumber, numberOfRankedElement, maxheap);
+		printResults(maxheap);
 
 		scanReturnValue = scanf("%s", input);
 		if(input[0] == command1[0]){
@@ -56,7 +51,7 @@ int main(){
 	return 0;
 }
 
-void readNewGraph(int dim, int* notConnected, int (*matrix)[dim]){
+void readNewGraph(int* notConnected, int (*matrix)[dim]){
 	int rowNum, colNum, characterPosition, n, value;
 	char* returnCondition;
 	char row[5000];
@@ -134,10 +129,10 @@ void readNewGraph(int dim, int* notConnected, int (*matrix)[dim]){
 	scanReturnValue =* returnCondition;
 }
 
-int dijkstraAlgorithm(int dim, int (*matrix)[dim]){
+int dijkstraAlgorithm(int (*matrix)[dim]){
 	int sum = 0, size = dim, min, left, right, father;
 	int i, j;
-	node miniheap[dim], temp, root;
+	dictionary miniheap[dim], temp, root;
 
 	miniheap[0].key = 0;
 	miniheap[0].num = 0;
@@ -191,16 +186,16 @@ int dijkstraAlgorithm(int dim, int (*matrix)[dim]){
 	return sum;
 }
 
-void rankGraph(int sum, int numberOfRankedElement, int currentGraphNumber, int* maxheapSize, top maxheap[]){
+void rankGraph(int sum, int* maxheapSize, dictionary maxheap[]){
 	int left, right, tempMax, i;
-	top temp;
+	dictionary temp;
 	
 	if(*maxheapSize < numberOfRankedElement){
 		i = *maxheapSize;
 		*maxheapSize = i + 1;
-		maxheap[*maxheapSize - 1].path = sum;
-		maxheap[*maxheapSize - 1].graphNumber = currentGraphNumber - 1;
-		while(i > 0 && maxheap[((i+1)/2)-1].path < maxheap[i].path){
+		maxheap[*maxheapSize - 1].key = sum;
+		maxheap[*maxheapSize - 1].num = currentGraphNumber - 1;
+		while(i > 0 && maxheap[((i+1)/2)-1].key < maxheap[i].key){
 			temp = maxheap[((i+1)/2)-1];
 			maxheap[((i+1)/2)-1] = maxheap[i];
 			maxheap[i] = temp;
@@ -208,18 +203,18 @@ void rankGraph(int sum, int numberOfRankedElement, int currentGraphNumber, int* 
 		}
 	}
 	else{
-		if(maxheap[0].path > sum){
-			maxheap[0].path = sum;
-			maxheap[0].graphNumber = currentGraphNumber - 1;
+		if(maxheap[0].key > sum){
+			maxheap[0].key = sum;
+			maxheap[0].num = currentGraphNumber - 1;
 			i = 0;
 			while((2*(i+1)-1) < numberOfRankedElement){
 				left = (2*(i+1))-1;
 				right = (2*(i+1));
-				if(maxheap[left].path > maxheap[i].path){
+				if(maxheap[left].key > maxheap[i].key){
 					tempMax = left;
 				}
 				else tempMax = i;
-				if(right < numberOfRankedElement && maxheap[right].path > maxheap[tempMax].path){
+				if(right < numberOfRankedElement && maxheap[right].key > maxheap[tempMax].key){
 					tempMax = right;
 				}
 				if(tempMax != i){
@@ -236,14 +231,14 @@ void rankGraph(int sum, int numberOfRankedElement, int currentGraphNumber, int* 
 	}
 }
 
-void printResults(int currentGraphNumber, int numberOfRankedElement, top maxheap[]){
+void printResults(dictionary maxheap[]){
 	int counter;
 
 	if(currentGraphNumber > numberOfRankedElement){
 		for(counter = 0; counter < numberOfRankedElement - 1; counter++){
-			printf("%d ", maxheap[counter].graphNumber);
+			printf("%d ", maxheap[counter].num);
 		}
-		printf("%d", maxheap[numberOfRankedElement - 1].graphNumber);
+		printf("%d", maxheap[numberOfRankedElement - 1].num);
 	}
 	else{
 		if(currentGraphNumber!=0){
