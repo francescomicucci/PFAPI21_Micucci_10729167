@@ -21,7 +21,7 @@ The graph's nodes are to be considered logically labeled with an index integer b
 
 ### TopK
 ---
-Considering all the inserted graph from the start of the program until the TopK command has been called (numbered starting from 0), TopK requires to print the index of the k graphs with the smallest sum over the values of the paths connecting node 0 to all the other reachable nodes. If we have multiple nodes with the same metric, we will insert in a higher position the graph that arrived first.
+Considering all the inserted graph from the start of the program until the TopK command has been called (numbered starting from 0), TopK requires to print the index of the k graphs with the smallest sum over the values of the paths connecting node 0 to all the other reachable nodes. If we have multiple graphs with the same metric, we will insert in a higher position the graph that arrived first.
 
 ### Input example
 ---
